@@ -1,6 +1,6 @@
 # SMGYM
 
-Sistema de gestión para gimnasios desarrollado con React y TypeScript. Permite administrar miembros, planes de membresía, asistencia, personal y generar reportes desde un dashboard intuitivo.
+Sistema de gestión para gimnasios desarrollado con REACT, TYPESCRIPT, .NET 8 + WEB API, SQL SERVER, ONION ARCHITECTURE. Permite administrar miembros, planes de membresía, asistencia, personal y generar reportes desde un dashboard intuitivo.
 
 ## Características Principales
 
