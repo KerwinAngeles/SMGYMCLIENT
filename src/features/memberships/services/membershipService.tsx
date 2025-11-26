@@ -20,7 +20,6 @@ export async function getClientByName(clientName: string) {
     }
 }
 
-// Alternative: Get all clients and find by name
 export async function getAllClients() {
     try {
         const response = await api.get(`${API}/Client/GetAllClients`);
@@ -30,6 +29,13 @@ export async function getAllClients() {
         console.error('Error getting all clients:', error);
         throw error;
     }
+}
+
+export async function renewMembership(renewalData: RenewalData) {
+    console.log('Sending renewal data to API:', renewalData);
+    const response = await api.post(`${API}/Membership/RenewMembership`, renewalData);
+    console.log('API response:', response.data);
+    return response.data;
 }
 
 export interface RenewalData {
@@ -44,9 +50,3 @@ export interface RenewalData {
     features: string[];
 }
 
-export async function renewMembership(renewalData: RenewalData) {
-    console.log('Sending renewal data to API:', renewalData);
-    const response = await api.post(`${API}/Membership/RenewMembership`, renewalData);
-    console.log('API response:', response.data);
-    return response.data;
-}
