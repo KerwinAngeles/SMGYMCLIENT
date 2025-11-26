@@ -11,6 +11,6 @@ Sistema de gestión para gimnasios desarrollado con REACT, TYPESCRIPT, .NET 8 + 
 - **Dashboard**: Vista general con estadísticas y métricas clave
 - **Autenticación**: Sistema de login y registro con protección de rutas
 
-<img src="/images/image-1.png" alt="imagen" />
-<img src="/images/image-2.png" alt="imagen" />
-<img src="/images/image-3.png" alt="imagen" />
+<img src="/public/images/image-2.png" alt="imagen" />
+<img src="/public/images/image-1.png" alt="imagen" />
+<img src="/public/images/image-3.png" alt="imagen" />
