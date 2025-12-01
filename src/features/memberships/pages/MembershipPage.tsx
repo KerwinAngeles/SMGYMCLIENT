@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getAllMemberships, type RenewalData } from "../services/membershipService"
+import { getAllMemberships } from "../services/membershipService"
+import { type RenewalData } from "@/features/memberships/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MembershipTable } from "@/features/memberships/components/MembershipTable"
 import { MembershipRenewalModal } from "@/features/memberships/components/MembershipRenewalModal"
@@ -77,21 +78,17 @@ const MembershipPage = () => {
 	}
 
 	function onRenewalSubmit(renewalData: RenewalData) {
-		// Store renewal data in session storage to pass to payment
-		sessionStorage.setItem('renewalData', JSON.stringify(renewalData));
-		
-		// Close renewal modal
+
+		console.log(renewalData.clientId);
+		console.log(renewalData.clientName);
 		setRenewalOpen(false);
 		setRenewingMembership(null);
-		
-		// Navigate to payment page (stepper)
 		navigate('/stepper', { 
 			state: { 
 				isRenewal: true, 
 				renewalData: renewalData
 			} 
 		});
-		
 		toast.success('Redirigiendo al proceso de pago...');
 	}
 

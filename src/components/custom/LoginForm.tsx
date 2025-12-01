@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState, useEffect, useContext } from "react"
+import { useState, useContext } from "react"
 import {useNavigate } from "react-router-dom"
 import { UserAuthContext } from "@/features/auth/context/AuthContext"
 import { Link } from "react-router-dom"
@@ -16,18 +16,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   const [error, setError] = useState<string | ''>('');
   const navigate = useNavigate();
   const from = '/dashboard';
- 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
 
   const handledLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    // Validación básica
     if (!username.trim() || !password.trim()) {
       toast.error("Validation Error", {
         description: "Please fill in all required fields",
@@ -45,11 +38,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       
     } catch (e: any) {
       console.log(e.response?.data?.error);
-      const errorMessage = e.response?.data?.error || 'Unable to sign in. Please check your credentials and try again.';
+      const errorMessage = e.response?.data?.error;
       setError(errorMessage);
       
-      // Toast de error mejorado
-      toast.error("Error signing in", {
+      toast.error(error, {
         id: "login",
         description: errorMessage,
         duration: 5000,

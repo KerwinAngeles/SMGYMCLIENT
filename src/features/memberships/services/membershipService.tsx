@@ -1,5 +1,6 @@
 import api from "@/services/api";
 import { config } from "@/config/environment";
+import {type RenewalData } from "../types";
 
 const API = config.apiUrl;
 
@@ -9,27 +10,6 @@ export async function getAllMemberships(){
     return response.data;
 }
 
-export async function getClientByName(clientName: string) {
-    try {
-        const response = await api.get(`${API}/Client/GetClientByName/${encodeURIComponent(clientName)}`);
-        console.log('Client by name response:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting client by name:', error);
-        throw error;
-    }
-}
-
-export async function getAllClients() {
-    try {
-        const response = await api.get(`${API}/Client/GetAllClients`);
-        console.log('All clients response:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting all clients:', error);
-        throw error;
-    }
-}
 
 export async function renewMembership(renewalData: RenewalData) {
     console.log('Sending renewal data to API:', renewalData);
@@ -38,15 +18,4 @@ export async function renewMembership(renewalData: RenewalData) {
     return response.data;
 }
 
-export interface RenewalData {
-    membershipId: string;
-    clientId: number;
-    planId: number;
-    planName: string;
-    planPrice: number;
-    startDate: string;
-    endDate: string;
-    duration: number;
-    features: string[];
-}
 

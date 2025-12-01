@@ -9,3 +9,16 @@ export type Membership = {
 	planPrice: number
 	autoRenew: boolean
 }
+
+export interface RenewalData {
+    membershipId: string;
+    clientId: number;
+    clientName: string;
+    planId: number;
+    planName: string;
+    planPrice: number;
+    startDate: string;
+    endDate: string;
+    duration: number;
+    features: string[];
+}

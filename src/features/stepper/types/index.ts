@@ -43,6 +43,8 @@ export interface CreatePayment {
 
 export interface ConfirmPayment {
   clientId: number;
+  membershipId: number;
   planId: number;
+  isRenew: boolean;
   paymentIntentId: string;
 }

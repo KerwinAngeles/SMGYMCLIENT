@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { planService } from '@/features/plans/services/planService';
 import { type EditPlanRequest } from '@/features/plans/types';
 import { type Membership } from '../types';
-import { type RenewalData, getClientByName } from '../services/membershipService';
+import { type RenewalData } from '../types';
 
 interface MembershipRenewalModalProps {
   open: boolean;
@@ -35,7 +35,7 @@ export function MembershipRenewalModal({
 }: MembershipRenewalModalProps) {
   const [plans, setPlans] = useState<EditPlanRequest[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<EditPlanRequest | null>(null);
-   const [loading] = useState(false);
+  const [loading] = useState(false);
   const [planLoading, setPlanLoading] = useState(true);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export function MembershipRenewalModal({
     const startDate = new Date(currentDate);
     const endDate = new Date(currentDate);
     endDate.setDate(endDate.getDate() + selectedPlan.duration);
-    
+
     return {
       startDate: startDate.toISOString().split('T')[0],
       endDate: endDate.toISOString().split('T')[0]
@@ -89,35 +89,13 @@ export function MembershipRenewalModal({
 
     const dates = calculateDates();
     if (!dates) return;
+    console.log(membership)
 
-    // Debug: Log the membership data to see what's available
-    console.log('Membership data:', membership);
-    console.log('Selected plan:', selectedPlan);
-
-    let clientId = membership.clientId;
-    
-    // If clientId is not available, try to get it from the client name
-    if (!clientId || clientId === 0) {
-      try {
-        console.log('ClientId not available, trying to get from client name:', membership.clientName);
-        const clientData = await getClientByName(membership.clientName);
-        if (clientData && clientData.id) {
-          clientId = clientData.id;
-          console.log('Found clientId:', clientId);
-        } else {
-          toast.error('No se pudo encontrar el ID del cliente');
-          return;
-        }
-      } catch (error) {
-        console.error('Error getting client by name:', error);
-        toast.error('Error al obtener información del cliente');
-        return;
-      }
-    }
 
     const renewalData: RenewalData = {
       membershipId: membership.id,
-      clientId: clientId,
+      clientId: membership.clientId,
+      clientName: membership.clientName,
       planId: selectedPlan.id,
       planName: selectedPlan.name,
       planPrice: selectedPlan.price,
@@ -160,12 +138,15 @@ export function MembershipRenewalModal({
         <div className="space-y-6">
           {/* Current Membership Info */}
           <Card className="border-muted">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Membresía Actual
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              <div>
+                <span className="font-medium">{membership.clientName}</span>
+              </div>
               <div className="flex justify-between items-center">
                 <span className="font-medium">{membership.planName}</span>
                 <Badge variant={membership.statusName === 'Active' ? 'default' : 'secondary'}>
@@ -265,8 +246,8 @@ export function MembershipRenewalModal({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={!selectedPlan || loading}
             className="bg-primary hover:bg-primary/90"
           >

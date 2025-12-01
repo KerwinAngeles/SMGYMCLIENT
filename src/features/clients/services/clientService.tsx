@@ -9,7 +9,6 @@ async function getAllClients(){
     return response.data.data;
 }
 
-
 async function updateClient(clientEdit: ClientEdit, id: number){
     const response = await api.put(`${API}/Client/UpdateClient/${id}`, clientEdit);
     console.log(response);
@@ -22,7 +21,19 @@ async function createClient(client: Client){
     return response.data;
 }
 
+async function getClientByName(clientName: string) {
+    try {
+        const response = await api.get(`${API}/Client/GetClientByName/${encodeURIComponent(clientName)}`);
+        console.log('Client by name response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting client by name:', error);
+        throw error;
+    }
+}
+
+
 export const clientService = {
-    getAllClients, updateClient, createClient
+    getAllClients, updateClient, createClient, getClientByName
 }
 

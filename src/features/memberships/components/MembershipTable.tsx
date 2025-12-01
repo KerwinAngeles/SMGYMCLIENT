@@ -21,7 +21,7 @@ export function MembershipTable(props: MembershipTableProps) {
 						<TableHead>StartDate</TableHead>
 						<TableHead>EndDate</TableHead>
 						<TableHead>Price</TableHead>
-						<TableHead>Renew</TableHead>
+						{/* <TableHead>Renew</TableHead> */}
 						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -34,7 +34,7 @@ export function MembershipTable(props: MembershipTableProps) {
 							<TableCell>{new Date(m.startDate).toLocaleDateString()}</TableCell>
 							<TableCell>{new Date(m.endDate).toLocaleDateString()}</TableCell>
 							<TableCell>{new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }).format(m.planPrice)}</TableCell>
-							<TableCell>{m.autoRenew ? "Sí" : "No"}</TableCell>
+							{/* <TableCell>{m.autoRenew ? "Sí" : "No"}</TableCell> */}
 							<TableCell className="text-right">
 								<Button 
 									size="sm" 
