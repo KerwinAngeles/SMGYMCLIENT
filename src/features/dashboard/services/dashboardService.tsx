@@ -9,9 +9,20 @@ export async function getClientsStatistics(){
     return response.data;
 }
 
+export async function getMembershipStatistics(){
+    const response = await api.get(`${API}/ReportPanel/GetMembershipStatistics`);
+    return response.data
+}
+
 export async function getChartAttendance(days: number){
     const response = await api.get(`${API}/ReportPanel/GetChartAttendance`, { params: { days } });
     console.log(response);
+    return response.data;
+}
+
+export async function getMembershipAboutToExpire(){
+    const response = await api.get(`${API}/ReportPanel/GetTotalMembershipAboutToExpire`)
+    console.log('API RESPONSE: ', response.data);
     return response.data;
 }
 

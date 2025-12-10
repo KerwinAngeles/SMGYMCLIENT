@@ -18,4 +18,3 @@ export async function renewMembership(renewalData: RenewalData) {
     return response.data;
 }
 
-

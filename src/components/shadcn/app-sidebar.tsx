@@ -43,7 +43,7 @@ const data = {
       title: "Join Process",
       url: "/stepper",
       icon: IconRepeat,
-      roles: ["Administrator"],
+      roles: ["Administrator", "Staff"],
     },
 
     {

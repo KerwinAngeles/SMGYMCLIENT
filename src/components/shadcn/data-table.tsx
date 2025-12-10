@@ -71,7 +71,7 @@ export function DataTable<TData, TValue>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
-            sorting,
+            sorting: [{id: "checkInTime", desc: true}],
             columnFilters,
             columnVisibility,
             rowSelection,

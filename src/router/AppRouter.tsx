@@ -12,6 +12,8 @@ import StaffPage from "@/features/staff/pages/StaffPage"
 import PlanPage from "@/features/plans/pages/PlanPage"
 import AccountPage from "@/features/account/pages/AccountPage"
 import StepperPage from "@/features/stepper/page/StepperPage"
+import { ForgotPassword } from "@/features/auth/components/ForgotPassword"
+import { ResetPassword } from "@/features/auth/components/ResetPassword"
 
 export function AppRouter() {
   return (
@@ -21,6 +23,8 @@ export function AppRouter() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgotPassword" element={<ForgotPassword/>}/>
+          <Route path="/resetPassword" element={<ResetPassword/>}/>
           <Route path="/dashboard" element={<ProtectedRoute> <DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/stepper" element={<ProtectedRoute> <DashboardLayout><StepperPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/staff" element={<ProtectedRoute> <DashboardLayout><StaffPage /></DashboardLayout></ProtectedRoute>} />

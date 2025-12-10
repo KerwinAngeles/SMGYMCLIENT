@@ -34,6 +34,7 @@ export const columns: ColumnDef<AttendanceRecord>[] = [
     {
         accessorKey: "checkInTime",
         header: "Check-In Time",
+        sortingFn: "datetime",
         cell: ({row}) => {
             const date = row.getValue<string>("checkInTime");
             const formatTime = (date: string) => {

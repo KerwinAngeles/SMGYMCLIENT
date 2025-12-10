@@ -1,4 +1,4 @@
-import type { AuthResponse, AuthRequest, RegisterRequest } from "@/features/auth/types";
+import type { AuthResponse, AuthRequest, RegisterRequest, ForgotPasswordRequest, ResetPasswordRequest } from "@/features/auth/types";
 import { tokenStorage } from "@/features/auth/services/tokenStorage";
 import { config } from "@/config/environment";
 import api from "@/services/api";
@@ -38,24 +38,42 @@ function setupAxiosInterceptors() {
   );
 }
 
-async function login(credentials: AuthRequest){
-    try {
-        const response = await api.post(`${API}/Account/Authenticate`, credentials);
-        tokenStorage.setTokens(response.data.jwToken, response.data.refreshToken);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+async function login(credentials: AuthRequest) {
+  try {
+    const response = await api.post(`${API}/Account/Authenticate`, credentials);
+    tokenStorage.setTokens(response.data.jwToken, response.data.refreshToken);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function register(credentials: RegisterRequest) {
-    try {
-        const response = await api.post(`${API}/Account/RegisterAdministrator`, credentials);
-        tokenStorage.setTokens(response.data.jwToken, response.data.refreshToken);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const response = await api.post(`${API}/Account/RegisterAdministrator`, credentials);
+    tokenStorage.setTokens(response.data.jwToken, response.data.refreshToken);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function forgotPassword(credentials: ForgotPasswordRequest) {
+  try {
+    const response = await api.post(`${API}/Account/ForgotPassword`, credentials);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function ResetPassword(credentials: ResetPasswordRequest) {
+  try {
+    const response = await api.post(`${API}/Account/ResetPassword`, credentials);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function registerStaff(credentials: RegisterRequest) {
@@ -101,12 +119,12 @@ async function logout() {
         { refreshToken },
         { signal: controller.signal }
       );
-      
+
       clearTimeout(timeoutId);
     }
   } catch (e: any) {
     console.error('Logout failed:', e);
-    
+
     // Handle different types of errors
     if (e.name === 'AbortError') {
       console.warn('Logout request timed out');
@@ -117,7 +135,7 @@ async function logout() {
     } else {
       console.error('Network or other error during logout');
     }
-    
+
     // Re-throw the error so the UI can handle it appropriately
     throw e;
   } finally {
@@ -145,5 +163,7 @@ export const authService = {
   logout,
   hasValidToken,
   getCurrentUser,
-  registerStaff
+  registerStaff,
+  forgotPassword,
+  ResetPassword
 };

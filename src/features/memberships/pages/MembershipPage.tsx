@@ -21,7 +21,6 @@ import {
 	Search,
 	Users,
 	DollarSign,
-	Calendar,
 	CheckCircle
 } from 'lucide-react'
 
@@ -50,10 +49,9 @@ const MembershipPage = () => {
 
 	const stats = useMemo(() => {
 		const active = memberships.filter(m => m.statusName === "Active").length
-		const paused = memberships.filter(m => m.statusName === "Suspended").length
 		const expired = memberships.filter(m => m.statusName === "Expired").length
 		const revenue = memberships.filter(m => m.statusName === "Active").reduce((sum, m) => sum + m.planPrice, 0)
-		return { active, paused, expired, revenue }
+		return { active, expired, revenue }
 	}, [memberships])
 
 	function onEditClick(item: Membership) {
@@ -152,7 +150,7 @@ const MembershipPage = () => {
 								transition={{ duration: 1.2, ease: "easeInOut" }}
 								className="space-y-6 relative" // slow motion
 							>
-								<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<Card>
 										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 											<CardTitle className="text-sm font-medium text-muted-foreground">
@@ -164,21 +162,6 @@ const MembershipPage = () => {
 											<div className="text-2xl font-bold">{stats.active}</div>
 											<p className="text-xs text-muted-foreground">
 												Currently active
-											</p>
-										</CardContent>
-									</Card>
-
-									<Card>
-										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-											<CardTitle className="text-sm font-medium text-muted-foreground">
-												Paused Memberships
-											</CardTitle>
-											<Calendar className="h-4 w-4" />
-										</CardHeader>
-										<CardContent>
-											<div className="text-2xl font-bold">{stats.paused}</div>
-											<p className="text-xs text-muted-foreground">
-												Temporarily paused
 											</p>
 										</CardContent>
 									</Card>

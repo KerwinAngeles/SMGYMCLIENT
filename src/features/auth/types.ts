@@ -47,6 +47,17 @@ export interface AuthContextType {
   hasAnyRole: (role: string[]) => boolean;
 }
 
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  token: string;
+}
+
 export const ContextInitialValues = {
   user: null,
   token: null,

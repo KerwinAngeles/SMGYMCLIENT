@@ -1,5 +1,7 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingDown, IconTrendingUp, IconAlertCircle } from "@tabler/icons-react"
 import { getAllMemberships } from "@/features/memberships/services/membershipService"
+import { getMembershipAboutToExpire } from "@/features/dashboard/services/dashboardService"
+import { getMembershipStatistics } from "@/features/dashboard/services/dashboardService"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -13,29 +15,35 @@ import {
 import { getClientsStatistics } from "@/features/dashboard/services/dashboardService"
 import { useEffect, useMemo, useState } from "react"
 import type { Membership } from "@/features/memberships/types"
+import type { ClientStatistics , MembershipStatistics} from "@/features/dashboard/types"
+
 
 async function getMembershipData(): Promise<Membership[]> {
   const response = await getAllMemberships();
+  console.log('total membership active ' + response)
   return response;
 }
 
-async function getStatisticsData(): Promise<
-  {
-    currentClients: number,
-    previousClients: number,
-    growthRateClient: number,
-    totalClient: number,
-    activeClients: number,
-    inactiveClients: number,
-    suspendedClients: number
-  } | null> {
+async function getTotalMembershipAboutToExpireData(): Promise<Membership[]> {
+  const response = await getMembershipAboutToExpire();
+  return response;
+}
+
+async function getStatisticsData(): Promise<ClientStatistics> {
   const response = await getClientsStatistics();
+  return response;
+}
+
+async function getMembershipStatisticsData(): Promise<MembershipStatistics> {
+  const response = await getMembershipStatistics();
   return response;
 }
 
 
 export function SectionCards() {
   const [membershipData, setMembershipData] = useState<Membership[]>([])
+  const [totalMembershipAboutToExpire, setTotalMembershipAboutToExpire] = useState<number>();
+  const [membershipStatistics, setMembershipStatistics] = useState<MembershipStatistics>();
   const [statisticsData, setStatisticsData] = useState<{
     currentClients: number
     previousClients: number
@@ -48,7 +56,7 @@ export function SectionCards() {
 
   const [isLoading, setLoading] = useState(false)
 
-  const loadGrowthData = async () => {
+  const LoadGrowthData = async () => {
     setLoading(true)
     try {
       const statistics = await getStatisticsData()
@@ -58,6 +66,18 @@ export function SectionCards() {
       toast.error('Failed to load growth data')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const LoadMembershipStatistics = async () => {
+    setLoading(true);
+    try{
+      const membershipStatistics = await getMembershipStatisticsData();
+      setMembershipStatistics(membershipStatistics);
+    }catch(error){
+      toast.error('Failed to load membership statistics data');
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -73,13 +93,28 @@ export function SectionCards() {
     }
   }
 
+  const GetTotalMemberhipAboutToExpire = async () => {
+    setLoading(true);
+    try {
+      const totalMembershipAboutToExpire = await getTotalMembershipAboutToExpireData();
+      const response = totalMembershipAboutToExpire.length;
+      setTotalMembershipAboutToExpire(response)
+    } catch (error) {
+      toast.error('Failed to load total membership about to expired data');
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const revenue = useMemo(() => {
     return membershipData.filter(m => m.statusName === "Active").reduce((sum, m) => sum + m.planPrice, 0)
   }, [membershipData])
 
   useEffect(() => {
-    LoadMembershipData()
-    loadGrowthData()
+    LoadMembershipData();
+    LoadMembershipStatistics();
+    LoadGrowthData();
+    GetTotalMemberhipAboutToExpire();
   }, [])
 
   if (isLoading) {
@@ -112,7 +147,7 @@ export function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Customers</CardDescription>
+          <CardDescription>Total Members</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
             {statisticsData?.totalClient ?? '...'}
           </CardTitle>
@@ -125,18 +160,18 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Total registered customers in the platform
+            Registered members on the platform
           </div>
           <div className="text-muted-foreground">
-            The community keeps growing 
+            Overall members base performance
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription> Total Membership Active</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
-            {statisticsData?.activeClients ?? '...'}
+            {membershipStatistics?.membershipActive}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -147,16 +182,16 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Users are active and happy
+            Currently active memberships
           </div>
           <div className="text-muted-foreground">The community keeps growing </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>Membership About to Expired</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
-            4.5%
+            {totalMembershipAboutToExpire}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -167,11 +202,12 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
+            Memberships approaching expiration <IconAlertCircle className="size-4" />
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">Opportunity to renew and retain customers</div>
         </CardFooter>
       </Card>
+
     </div>
   )
 }
