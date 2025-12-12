@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { type Staff, type EditStaffModalProps } from "@/features/staff/types"
 import { useState, useEffect } from "react"
-import { toast } from 'sonner';
 
 export function EditStaffModal({ open, onClose, staff, onSave }: EditStaffModalProps) {
     const [formData, setFormData] = useState<Staff | null>(staff);
@@ -26,7 +25,6 @@ export function EditStaffModal({ open, onClose, staff, onSave }: EditStaffModalP
 
     const handleSubmit = () => {
         if (formData) onSave(formData)
-        toast.success('Staff edit succesfully');
         onClose();
     }
 

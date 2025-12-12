@@ -27,7 +27,6 @@ const Stepper = ({ isRenewal = false, renewalData = null }: StepperProps) => {
     handleSubmit,
   } = useStepper(isRenewal, renewalData);
 
-  // Animación de transición para los pasos
   const renderStepContent = () => {
     let content = null;
     switch (step) {

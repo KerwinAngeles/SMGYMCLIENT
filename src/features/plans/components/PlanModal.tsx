@@ -1,11 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogContent,
-} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,8 +7,11 @@ import { planService } from "@/features/plans/services/planService"
 import { toast } from 'sonner'
 import { cn } from "@/lib/utils"
 import Modal from '@/components/shadcn/modal'
-import { type EditPlanRequest } from '@/features/types/auth'
+import { type EditPlanRequest } from '@/features/plans/types'
 import { Plus, Edit3, X } from 'lucide-react'
+import { z } from "zod";
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
     Select,
     SelectContent,
@@ -23,7 +19,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogContent,
+} from "@/components/ui/dialog"
 
+const planModalFormSchema = z.object({
+    name: z.string().min(2),
+    price: z.string().min(1),
+    duration: z.string().min(1),
+    description: z.string().min(8),
+    features: z.array(z.string())
+});
+
+type PlanModalFormSchema = z.infer<typeof planModalFormSchema>
 
 interface PlanModalProps {
     className?: string
@@ -41,25 +53,23 @@ export function PlanModal({
     children
 
 }: PlanModalProps) {
-    const [name, setName] = useState<string>('')
-    const [price, setPrice] = useState<string>('')
-    const [duration, setDuration] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
-    const [features, setFeatures] = useState<string[]>([])
     const [current, setCurrent] = useState("")
     const { isLoading } = useContext(UserAuthContext)
     const [open, setOpen] = useState(false)
+    const { register, handleSubmit, setError, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<PlanModalFormSchema>({
+        resolver: zodResolver(planModalFormSchema)
+    });
 
-
+    const features = watch("features") || []
     const addFeature = () => {
         if (current.trim() !== "" && !features.includes(current.trim())) {
-            setFeatures([...features, current.trim()])
+            setValue("features", [...features, current.trim()])
             setCurrent("")
         }
     }
 
     const removeFeature = (feature: string) => {
-        setFeatures(features.filter((f) => f !== feature))
+        setValue("features", features.filter((f) => f !== feature))
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,22 +79,15 @@ export function PlanModal({
         }
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        if (!name || !price || !duration || !description || !features) {
-            toast.error('Please fill in all required fields')
-            return
-        }
-
+    const onSubmit: SubmitHandler<PlanModalFormSchema> = async (data) => {
         try {
             const planData = {
                 id: editPlan?.id || 0,
-                name: name,
-                price: parseFloat(price),
-                duration: parseInt(duration),
-                description: description,
-                planFeatures: features
+                name: data.name,
+                price: parseFloat(data.price),
+                duration: parseInt(data.duration),
+                description: data.description,
+                planFeatures: data.features
             }
             if (editPlan) {
                 await planService.EditPlan(planData.id, planData)
@@ -98,30 +101,37 @@ export function PlanModal({
 
             setOpen(false)
             resetForm()
-        } catch (e: any) {
-            toast.error(e.response?.data?.error)
-
+        } catch (error: any) {
+            toast.error(error.response?.data?.error)
+            setError("root", {
+                message: error.error
+            })
         }
     }
 
+
     useEffect(() => {
         if (editPlan) {
-            setName(editPlan.name || '')
-            setPrice(editPlan.price?.toString() || '')
-            setDuration(editPlan.duration?.toString() || '')
-            setDescription(editPlan.description || '')
-            setFeatures(editPlan.planFeatures || [])
+            reset({
+                name: editPlan.name ?? "",
+                price: editPlan.price?.toString() ?? "",
+                duration: editPlan.duration?.toString() ?? "",
+                description: editPlan.description ?? "",
+                features: editPlan.planFeatures ?? []
+            })
         } else {
             resetForm()
         }
     }, [editPlan, open])
 
     const resetForm = () => {
-        setName('')
-        setPrice('')
-        setDuration('')
-        setDescription('')
-        setFeatures([])
+        reset({
+            name: "",
+            price: "",
+            duration: "",
+            description: "",
+            features: []
+        })
     }
 
 
@@ -169,17 +179,17 @@ export function PlanModal({
                     </DialogDescription>
                 </DialogHeader>
 
-                <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+                <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
                     {/* Name */}
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-sm font-medium">Plan Name</Label>
-                        <Select 
-                            value={name}
+                        <Select
+                            {...register("name")}
                             onValueChange={(value) => {
-                                setName(value)
-                                if (value === "Basic") setDuration("30")
-                                if (value === "Plus") setDuration("90")
-                                if (value === "Pro") setDuration("360")
+                                setValue("name", value)
+                                if (value === "Basic") setValue("duration", "30")
+                                if (value === "Plus") setValue("duration", "90")
+                                if (value === "Pro") setValue("duration", "360")
                             }}
                             disabled={isLoading}
                         >
@@ -192,6 +202,10 @@ export function PlanModal({
                                 <SelectItem value="Pro">Pro</SelectItem>
                             </SelectContent>
                         </Select>
+                        {errors.name && (
+                            <div className='text-red-500 text-start'>{errors.name.message}</div>
+                        )}
+
                     </div>
 
                     {/* Price & Duration */}
@@ -202,22 +216,27 @@ export function PlanModal({
                                 id="price"
                                 type="number"
                                 step="0.01"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
+                                {...register("price")}
                                 disabled={isLoading}
                                 className="h-11"
                             />
+                            {errors.price && (
+                                <div className='text-red-500 text-start'>{errors.price.message}</div>
+                            )}
+
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="duration" className="text-sm font-medium">Duration (days)</Label>
                             <Input
                                 id="duration"
                                 type="number"
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
+                                {...register("duration")}
                                 disabled={isLoading}
                                 className="h-11"
                             />
+                            {errors.duration && (
+                                <div className='text-red-500 text-start'>{errors.duration.message}</div>
+                            )}
                         </div>
                     </div>
 
@@ -226,11 +245,13 @@ export function PlanModal({
                         <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                         <Input
                             id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            {...register("description")}
                             disabled={isLoading}
                             className="h-11"
                         />
+                        {errors.description && (
+                            <div className='text-red-500 text-start'>{errors.description.message}</div>
+                        )}
                     </div>
 
                     {/* Features */}
@@ -260,6 +281,9 @@ export function PlanModal({
                                 onKeyDown={handleKeyDown}
                                 className="flex-1 min-w-[120px] border-none bg-transparent shadow-none focus-visible:ring-0"
                             />
+                            {errors.features && (
+                                <div className='text-red-500 text-start'>{errors.features.message}</div>
+                            )}
                         </div>
                     </div>
 
@@ -267,9 +291,9 @@ export function PlanModal({
                     <Button
                         type="submit"
                         className="w-full h-11 font-semibold shadow-md hover:shadow-lg"
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                     >
-                        {isLoading
+                        {isSubmitting
                             ? (editPlan ? "Updating..." : "Creating...")
                             : (editPlan ? "Update Plan" : "Create Plan")}
                     </Button>

@@ -44,7 +44,7 @@ export const ForgotPassword = () => {
     }
 
     return (
-        <div className='flex flex-1 min-h-screen items-center justify-center text-center '>
+        <div className='flex flex-1 min-h-screen items-center justify-center text-center'>
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle>Having trouble logging in?</CardTitle>
@@ -66,17 +66,19 @@ export const ForgotPassword = () => {
                             </div>
                         </div>
                         <Button
+
                             type="submit"
-                            className="w-full"
+                            className="w-full mt-3"
                             disabled={isSubmitting}
+
                         >
                             Send reset link
                         </Button>
                     </form>
                 </CardContent>
 
-                <CardFooter className="flex-col gap-2">
-                    <Link to={'/Login'} className="nderline underline-offset-4 cursor-pointer text-[13px] pt-3">
+                <CardFooter className='flex-1 flex justify-center'>
+                    <Link to={'/Login'} className="underline underline-offset-4 cursor-pointer text-[13px]">
                         Login in to your account
                     </Link>
                 </CardFooter>

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { type User, type AuthContextType, type AuthRequest, type RegisterRequest, ContextInitialValues } from '@/features/auth/types';
+import { type User, type AuthContextType, type AuthRequest, type RegisterRequest, ContextInitialValues} from '@/features/auth/types';
 import { authService } from '@/features/auth/services/authService'
 import { tokenStorage } from '@/features/auth/services/tokenStorage'
 import { toast } from 'sonner';
@@ -71,7 +71,7 @@ export const AuthProvider = (authProviderProps: AuthProviderProps) => {
         }
     };
 
-    const register = async (credentials: RegisterRequest) => {
+    const registerAccount = async (credentials: RegisterRequest) => {
         setIsLoading(true);
         try {
             const response = await authService.register(credentials);
@@ -114,7 +114,6 @@ export const AuthProvider = (authProviderProps: AuthProviderProps) => {
                 roles: response.roles
             };
             setUser(userData);
-        
             toast.success("Welcome back!", {
                 description: `Hello ${userData.name}, you have signed in successfully`,
                 duration: 4000
@@ -165,7 +164,7 @@ export const AuthProvider = (authProviderProps: AuthProviderProps) => {
         user,
         token: tokenStorage.getToken(),
         login,
-        register,
+        registerAccount,
         logout,
         refreshAuth,
         isLoading,

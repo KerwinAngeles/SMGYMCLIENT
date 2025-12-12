@@ -20,7 +20,7 @@ export interface RegisterResponse {
 }
 
 export interface AuthRequest {
-  username: string;
+  userName: string;
   password: string;
 }
 
@@ -31,6 +31,8 @@ export interface AuthResponse {
   roles: string[];
   jwToken: string;
   refreshToken: string;
+  success?: string
+  error?: string
 }
 
 
@@ -40,7 +42,7 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (credentials: AuthRequest) => Promise<void>;
   registerStaff: (credentials: RegisterRequest) => Promise<void>;
-  register: (credentials: RegisterRequest) => Promise<void>;
+  registerAccount: (credentials: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshAuth: () => Promise<void>
   hasRole: (role: string) => boolean;
@@ -64,7 +66,7 @@ export const ContextInitialValues = {
   isLoading: false,
   login: async () => { },
   registerStaff: async () => { },
-  register: async () => { },
+  registerAccount: async () => { },
   logout: () => { },
   refreshAuth: async () => { },
   hasRole: () => false,

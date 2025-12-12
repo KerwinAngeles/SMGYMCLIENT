@@ -2,63 +2,49 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState, useContext } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserAuthContext } from "@/features/auth/context/AuthContext"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 import { CheckCircle, Loader2 } from "lucide-react"
+import { z } from "zod";
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+const loginFormSchema = z.object({
+  userName: z.string().min(8),
+  password: z.string().min(8)
+});
+
+type LoginFormSchema = z.infer<typeof loginFormSchema>
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
-  const { login, isLoading } = useContext(UserAuthContext);
-  const [username, setUsername] = useState<string | ''>('');
-  const [password, setPassword] = useState<string | ''>('');
-  const [error, setError] = useState<string | ''>('');
+  const { login } = useContext(UserAuthContext);
   const navigate = useNavigate();
   const from = '/dashboard';
 
-  const handledLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema)
+  });
 
-    if (!username.trim() || !password.trim()) {
-      toast.error("Validation Error", {
-        description: "Please fill in all required fields",
-        duration: 4000
-      });
-      return;
-    }
-
+  const onSubmit: SubmitHandler<LoginFormSchema> = async ({ userName, password }) => {
     try {
-      await login({ username, password });
-
+      await login({ userName, password })
       setTimeout(() => {
-        navigate(from, { replace: true });
+        navigate(from, { replace: true })
       }, 2000);
-
     } catch (e: any) {
-      console.log(e.response?.data?.error);
-      const errorMessage = e.response?.data?.error;
-      setError(errorMessage);
-
-      toast.error(error, {
+      console.log(e)
+      toast.error(e.response?.data?.error, {
         id: "login",
-        description: errorMessage,
         duration: 5000,
-        action: {
-          label: "Retry",
-          onClick: () => {
-            setError('');
-            setUsername('');
-            setPassword('');
-          }
-        }
       });
     }
   }
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -68,7 +54,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="username">Username</Label>
-          <Input id="username" type="text" placeholder="Enter your username" required value={username} onChange={(e) => setUsername(e.target.value)} disabled={isLoading} />
+          <Input id="username" type="text" placeholder="Enter your username" {...register("userName")} disabled={isSubmitting} />
+          {errors.userName && (
+            <div className='text-red-500 text-start'>{errors.userName.message}</div>
+          )}
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -77,16 +66,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
               Forgot Password?
             </Link>
           </div>
-          <Input id="password" type="password" placeholder="Enter your password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
+          <Input id="password" type="password" placeholder="Enter your password" {...register("password")} disabled={isSubmitting} />
+          {errors.password && (
+            <div className='text-red-500 text-start'>{errors.password.message}</div>
+          )}
         </div>
 
         <Button
           type="submit"
           className="w-full h-11 bg-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-200"
-          onClick={handledLogin}
-          disabled={isLoading}
+          disabled={isSubmitting}
         >
-          {isLoading ? (
+          {isSubmitting ? (
             <div className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>Signing in...</span>

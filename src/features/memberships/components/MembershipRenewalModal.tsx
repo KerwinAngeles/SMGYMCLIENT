@@ -19,6 +19,7 @@ import { planService } from '@/features/plans/services/planService';
 import { type EditPlanRequest } from '@/features/plans/types';
 import { type Membership } from '../types';
 import { type RenewalData } from '../types';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface MembershipRenewalModalProps {
   open: boolean;
@@ -105,19 +106,7 @@ export function MembershipRenewalModal({
       features: selectedPlan.planFeatures || []
     };
 
-    console.log('Renewal data being sent:', renewalData);
     onRenewalSubmit(renewalData);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES');
   };
 
   if (!membership) return null;

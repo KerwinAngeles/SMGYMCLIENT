@@ -5,7 +5,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { type FormData } from "../types";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import {getAllPaymentMethods} from "@/features/stepper/services/stepperService";
+import { getAllPaymentMethods } from "@/features/stepper/services/stepperService";
 import { useEffect, useState } from "react";
 import { type PaymentMethod } from "@/features/stepper/types";
 
@@ -16,7 +16,6 @@ interface PaymentFormProps {
   clientSecret?: string;
 }
 
-
 export const PaymentForm = ({
   formData,
   onPaymentMethodChange,
@@ -25,12 +24,11 @@ export const PaymentForm = ({
   const elements = useElements();
 
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         const methods = await getAllPaymentMethods();
-        console.log("Fetched payment methods:", methods.data);
-        console.log("Selected payment method:", formData.paymentMethod.name);
         setPaymentMethods(Array.isArray(methods?.data) ? methods.data : []);
       } catch (error) {
         console.error("Error fetching payment methods:", error);
@@ -61,15 +59,15 @@ export const PaymentForm = ({
             <div
               key={method.id}
               className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${formData.paymentMethod.id === method.id
-                  ? "border-primary bg-primary/5"
-                  : "border-muted hover:border-primary/50"
+                ? "border-primary bg-primary/5"
+                : "border-muted hover:border-primary/50"
                 }`}
               onClick={() => onPaymentMethodChange(method)}
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.paymentMethod.id === method.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
                   }`}
               >
               </div>
