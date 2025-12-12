@@ -8,7 +8,7 @@ interface AttendanceStatsProps {
 }
 
 export function AttendanceStats({ todayRecords, className }: AttendanceStatsProps) {
-    const stats = [
+    const stats =  [
         {
             title: "Total Visits Today",
             value: todayRecords ? todayRecords.totalDays.toString() : '0',

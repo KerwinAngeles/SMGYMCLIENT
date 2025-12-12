@@ -13,6 +13,7 @@ import { DataTable } from "@/components/shadcn/data-table"
 import { columns } from "@/features/clients/dataTable/columns"
 import React, { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion";
+import { getAge } from "@/lib/utils"
 
 import {
   Users,
@@ -94,21 +95,6 @@ const ClientPage = () => {
       toast.error(e.response?.data?.error || 'Error updating client');
     }
   };
-
-  const getAge = (birthDay: string) => {
-    try {
-      const birthDate = new Date(birthDay)
-      const today = new Date()
-      let age = today.getFullYear() - birthDate.getFullYear()
-      const monthDiff = today.getMonth() - birthDate.getMonth()
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--
-      }
-      return age
-    } catch {
-      return 'Unknown'
-    }
-  }
 
 
   if (loading) {
