@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { staffService } from "../services/staffService"
 import { Button } from "@/components/ui/button"
 import { EditStaffModal } from "../components/StaffEditModal"
-import {type Staff } from "@/features/types/auth"
+import {type Staff } from "@/features/staff/types"
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -16,7 +16,6 @@ export const useStepper = (isRenewal: boolean = false, renewalData: any = null) 
   const elements = useElements();
   const navigate = useNavigate();
 
-  
   const [formData, setFormData] = useState<FormData>({
     client: isRenewal && renewalData ? {
       id: Number(renewalData.clientId),
@@ -72,7 +71,6 @@ export const useStepper = (isRenewal: boolean = false, renewalData: any = null) 
       }
       try {
         const clientResponse = await stepperService.createClient(formData.client);
-        console.log("Client created:", clientResponse);
         setFormData(prev => ({
           ...prev,
           client: {
@@ -80,15 +78,13 @@ export const useStepper = (isRenewal: boolean = false, renewalData: any = null) 
             ...clientResponse.data,
           }
         }));
-        // Slow motion effect: delay el cambio de paso
         setIsLoading(true);
         setTimeout(() => {
           setStep('plan');
           setIsLoading(false);
-        }, 600); // 600ms de transición
+        }, 600);
       } catch (error) {
         toast.error('Error creating client');
-        console.error(error);
       }
     } else if (step === 'plan') {
       if (!formData.plan) {
@@ -138,7 +134,7 @@ export const useStepper = (isRenewal: boolean = false, renewalData: any = null) 
       if (formData.paymentMethod.name == "Credit Card" || formData.paymentMethod.name == "Debit Card") {
         const cardElement = elements!.getElement(CardElement) || null;
         console.log("Card Element:", cardElement);
-        
+
         const result = await stripe!.confirmCardPayment(clientSecret!, {
           payment_method: {
             card: cardElement!,
@@ -159,18 +155,31 @@ export const useStepper = (isRenewal: boolean = false, renewalData: any = null) 
       }
 
       let isrenew;
-      if(isRenewal){
+      if (isRenewal) {
         isrenew = true;
       }
-      const responseConfirmPayment = await stepperService.confirmPayment({
-        clientId: isRenewal && renewalData ? renewalData.clientId : formData.client.id,
-        planId: formData.plan?.id,
-        paymentIntentId: confirmPaymentId,
-        isRenew: isrenew,
-        membershipId: renewalData.membershipId
-      } as ConfirmPayment);
-      if (responseConfirmPayment.data.pdfUrl) {
-        window.open(responseConfirmPayment.data.pdfUrl, '_blank');
+
+      if (isrenew) {
+        const responseConfirmPayment = await stepperService.confirmPayment({
+          clientId: isRenewal && renewalData ? renewalData.clientId : formData.client.id,
+          planId: formData.plan?.id,
+          paymentIntentId: confirmPaymentId,
+          isRenew: isrenew,
+          membershipId: renewalData.membershipId
+        } as ConfirmPayment);
+        if (responseConfirmPayment.data.pdfUrl) {
+          window.open(responseConfirmPayment.data.pdfUrl, '_blank');
+        }
+      } else {
+        const responseConfirmPayment = await stepperService.confirmPayment({
+          clientId: isRenewal && renewalData ? renewalData.clientId : formData.client.id,
+          planId: formData.plan?.id,
+          paymentIntentId: confirmPaymentId,
+          isRenew: isrenew,
+        } as ConfirmPayment);
+        if (responseConfirmPayment.data.pdfUrl) {
+          window.open(responseConfirmPayment.data.pdfUrl, '_blank');
+        }
       }
 
       if (isRenewal) {

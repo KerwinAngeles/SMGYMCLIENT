@@ -7,19 +7,16 @@ const API = config.apiUrl;
 
 async function createClient(formData: FormData['client']) {
   const response = await api.post(`${API}/Client/CreateClient`, formData);
-  console.log(response);
   return response.data;
 }
 
 export async function getAllPaymentMethods(){
   const response = await api.get(`${API}/PaymentMethod/GetAllPaymentMethod`);
-  console.log(response);
   return response.data;
 }
   
 export async function createPaymentIntent(data: CreatePayment){
   const response = await api.post(`${API}/Payment/CreatePayment`, data);
-  console.log(response);
   return response.data;
 }
 

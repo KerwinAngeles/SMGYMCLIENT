@@ -57,7 +57,6 @@ export function MembershipRenewalModal({
       const response = await planService.getAllPlans();
       setPlans(response);
     } catch (error) {
-      console.error('Error fetching plans:', error);
       toast.error('Error al cargar los planes disponibles');
     } finally {
       setPlanLoading(false);
@@ -90,8 +89,6 @@ export function MembershipRenewalModal({
 
     const dates = calculateDates();
     if (!dates) return;
-    console.log(membership)
-
 
     const renewalData: RenewalData = {
       membershipId: membership.id,
@@ -105,7 +102,6 @@ export function MembershipRenewalModal({
       duration: selectedPlan.duration,
       features: selectedPlan.planFeatures || []
     };
-
     onRenewalSubmit(renewalData);
   };
 

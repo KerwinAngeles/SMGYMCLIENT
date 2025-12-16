@@ -1,5 +1,5 @@
 export type Membership = {
-	id: string
+	id: number
 	clientId: number
 	planName: string
 	clientName: string
@@ -11,7 +11,7 @@ export type Membership = {
 }
 
 export interface RenewalData {
-    membershipId: string;
+    membershipId: number;
     clientId: number;
     clientName: string;
     planId: number;

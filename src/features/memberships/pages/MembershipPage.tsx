@@ -33,7 +33,7 @@ const MembershipPage = () => {
 	const [query, setQuery] = useState("")
 	const [statusFilter, setStatusFilter] = useState<string>("all")
 	const [loading, setLoading] = useState(false);
-	
+
 	// Renewal modal state
 	const [renewalOpen, setRenewalOpen] = useState(false)
 	const [renewingMembership, setRenewingMembership] = useState<Membership | null>(null)
@@ -76,16 +76,13 @@ const MembershipPage = () => {
 	}
 
 	function onRenewalSubmit(renewalData: RenewalData) {
-
-		console.log(renewalData.clientId);
-		console.log(renewalData.clientName);
 		setRenewalOpen(false);
 		setRenewingMembership(null);
-		navigate('/stepper', { 
-			state: { 
-				isRenewal: true, 
+		navigate('/stepper', {
+			state: {
+				isRenewal: true,
 				renewalData: renewalData
-			} 
+			}
 		});
 		toast.success('Redirigiendo al proceso de pago...');
 	}
@@ -96,7 +93,7 @@ const MembershipPage = () => {
 				const data = await getAllMemberships();
 				setMemberships(data);
 			} catch (err) {
-				console.error("Error cargando membresías", err)
+				toast.error('Error al obtener todas las membresias');
 			} finally {
 				setLoading(false)
 			}

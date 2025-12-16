@@ -20,7 +20,7 @@ export const AuthProvider = (authProviderProps: AuthProviderProps) => {
         try {
             await authService.logout();
         } catch (error) {
-            console.error('Logout error:', error);
+            throw error
         } finally {
             setUser(null);
             setIsLoading(false);
