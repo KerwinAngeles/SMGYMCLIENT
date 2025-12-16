@@ -1,3 +1,5 @@
+import {type LucideIcon } from "lucide-react"
+
 export interface AttendanceRequest {
   clientId: number;
   accessCode?: string;
@@ -22,4 +24,18 @@ export interface AttendanceSummary {
   totalDays: number;
   totalThisWeek: number;
   totalThisMonth: number;
+}
+
+export interface AttendanceStatsProps {
+    todayRecords: AttendanceSummary | null
+    className?: string
+}
+
+export interface StatAttendanceItem {
+  title: string;
+  value: string;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+  bgColor: string;
 }

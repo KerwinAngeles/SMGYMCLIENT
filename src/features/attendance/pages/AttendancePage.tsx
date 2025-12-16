@@ -12,6 +12,7 @@ import { AttendanceList } from '../components/AttendanceList'
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from 'sonner'
 import { Calendar, Users, RefreshCw } from 'lucide-react'
+import { today } from "@/lib/utils"
 
 async function getAttendanceData(): Promise<AttendanceRecord[]> {
     const response = await attendanceService.getAllAttendance();
@@ -65,13 +66,6 @@ const AttendancePage = () => {
     const handleAttendanceRecorded = () => {
         loadAttendanceData()
     }
-
-    const today = new Date().toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    })
 
     return (
         <SidebarProvider
@@ -138,6 +132,7 @@ const AttendancePage = () => {
                                 <AttendanceStats
                                     todayRecords={attendanceSummary}
                                     className="mb-6"
+
                                 />
 
                                 {/* Attendance List */}

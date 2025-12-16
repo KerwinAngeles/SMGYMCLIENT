@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IconUser, IconMail, IconUserCircle, IconShield } from '@tabler/icons-react';
+import { getRoleBadgeVariant, getInitials } from '@/lib/utils';
+import { ModeToggle } from '@/components/custom/ModeTogle';
 
 export default function AccountPage() {
   const { user, isLoading } = useContext(UserAuthContext);
@@ -48,29 +50,6 @@ export default function AccountPage() {
       </div>
     );
   }
-
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role.toLowerCase()) {
-      case 'administrator':
-      case 'admin':
-        return 'destructive';
-      case 'manager':
-        return 'default';
-      case 'staff':
-        return 'secondary';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -284,6 +263,7 @@ export default function AccountPage() {
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Thank you for using SMGYM. Your information is secure and up to date.
                   </p>
+                  <ModeToggle/>
                 </div>
               </CardContent>
             </Card>

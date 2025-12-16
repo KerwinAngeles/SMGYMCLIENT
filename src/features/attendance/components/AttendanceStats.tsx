@@ -1,41 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { type AttendanceSummary } from '@/features/attendance/types'
-import { Activity } from 'lucide-react'
-
-interface AttendanceStatsProps {
-    todayRecords: AttendanceSummary | null
-    className?: string
-}
+import { StastAttendance } from "@/lib/consts"
+import { type AttendanceStatsProps } from "@/features/attendance/types"
 
 export function AttendanceStats({ todayRecords, className }: AttendanceStatsProps) {
-    const stats =  [
-        {
-            title: "Total Visits Today",
-            value: todayRecords ? todayRecords.totalDays.toString() : '0',
-            description: ` unique clients`,
-            icon: Activity,
-            color: "text-blue-600",
-            bgColor: "bg-blue-100"
-        },
-        {
-            title: "Total Visits Week",
-            value: todayRecords ? todayRecords.totalThisWeek.toString() : '0',
-            description: "Finished workouts",
-            icon: Activity,
-            color: "text-purple-600",
-            bgColor: "bg-purple-100"
-        },
-        {
-            title: "Total Visits Month",
-            value: todayRecords ? todayRecords.totalThisMonth.toString() : '0',
-            description: "Finished workouts",
-            icon: Activity,
-            color: "text-purple-600",
-            bgColor: "bg-purple-100"
-        },
-
-    ]
-
+    const stats = StastAttendance({
+        todayRecords,
+    })
     return (
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
             {stats.map((stat, index) => {
